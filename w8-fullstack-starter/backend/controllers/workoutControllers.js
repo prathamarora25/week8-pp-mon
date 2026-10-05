@@ -30,19 +30,69 @@ const createWorkout = async (req, res) => {
 };
 
 // GET /api/workouts/:workoutId
-const getWorkoutById = async (req, res) => {
-  res.send("getWorkoutById");
+ const getWorkoutById = async (req, res) => {
+  const { workoutId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+    return res.status(400).json({ error: "Invalid workout ID" });
+  }
+  try {
+    const workout = await Workout.findById(workoutId);
+    if (!workout) {
+      return res.status(404).json({ error: "Workout not found" });
+    }
+    res.status(200).json(workout);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 // PUT /api/workouts/:workoutId
 const updateWorkout = async (req, res) => {
-  res.send("updateWorkout");
+  const { workoutId } = req.params;
+  const { title, difficulty, description, price } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+    return res.status(400).json({ error: "Invalid workout ID" });
+  }
+
+  try {
+    const workout = await Workout.findByIdAndUpdate(
+      workoutId,
+      { title, difficulty, description, price },
+      { new: true }
+    );
+
+    if (!workout) {
+      return res.status(404).json({ error: "Workout not found" });
+    }
+
+    res.status(200).json(workout);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 // DELETE /api/workouts/:workoutId
 const deleteWorkout = async (req, res) => {
-  res.send("deleteWorkout");
+  const { workoutId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+    return res.status(400).json({ error: "Invalid workout ID" });
+  }
+
+  try {
+    const workout = await Workout.findByIdAndDelete(workoutId);
+
+    if (!workout) {
+      return res.status(404).json({ error: "Workout not found" });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
+
 
 module.exports = {
   getAllWorkouts,
