@@ -60,6 +60,9 @@ const WorkoutPage  = () => {
       <p>Difficulty: {workout.difficulty}</p>
       <p>{workout.description}</p>
       <p>Price: ${workout.price}</p>
+      <button onClick={() => navigate(`/edit-workout/${id}`)}>
+        Edit
+      </button>
       <button onClick={deleteWorkout}>Delete</button>
     </div>
   );

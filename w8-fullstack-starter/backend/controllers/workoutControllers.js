@@ -49,17 +49,16 @@ const createWorkout = async (req, res) => {
 // PUT /api/workouts/:workoutId
 const updateWorkout = async (req, res) => {
   const { workoutId } = req.params;
-  const { title, difficulty, description, price } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(workoutId)) {
     return res.status(400).json({ error: "Invalid workout ID" });
   }
 
   try {
-    const workout = await Workout.findByIdAndUpdate(
-      workoutId,
-      { title, difficulty, description, price },
-      { new: true }
+    const workout = await Workout.findOneAndUpdate(
+      { _id: workoutId },
+      { ...req.body },
+      { returnDocument: "after", runValidators: true }
     );
 
     if (!workout) {
@@ -68,7 +67,7 @@ const updateWorkout = async (req, res) => {
 
     res.status(200).json(workout);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
 
